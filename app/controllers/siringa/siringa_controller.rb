@@ -13,13 +13,13 @@ module Siringa
     end
 
     def dump
+      Siringa.keep_five_dumps(Siringa.ordered_dumps)
       result = Siringa.dump_to(Siringa.dump_file_name)
       if result[:success]
-        Siringa.keep_five_dumps(Siringa.ordered_dumps)
-        resp = { :text => "DB dumped at #{result[:file_name]}",
+        resp = { :text => "DB dumped at #{result[:dump_path]}",
                  :status => :created }
       else
-        resp = { :text => "DB dump FAILED!\nError:\n#{result[:output]}",
+        resp = { :text => "DB dump FAILED!\nError:\n#{result[:error]}",
                  :status => :internal_server_error }
       end
 
@@ -31,7 +31,7 @@ module Siringa
       if last_dump
         result = Siringa.restore_from(last_dump)
         if result[:success]
-          resp = { :text => "DB restored from #{result[:file_name]}",
+          resp = { :text => "DB restored from #{result[:dump_path]}",
                    :status => :accepted }
         else
           resp = { :text => "DB restore FAILED!\nError:\n#{result[:output]}",
