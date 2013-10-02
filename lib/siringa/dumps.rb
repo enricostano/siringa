@@ -1,3 +1,5 @@
+require 'open3'
+
 module Siringa
 
   # Generate dump file name
@@ -12,17 +14,19 @@ module Siringa
   # @param [String] dump path
   # @return [Object]
   def self.dump_to(dump_path)
+    result = {}
     adapter_config = ActiveRecord::Base.connection.instance_values["config"]
     case adapter_config[:adapter]
     when "mysql", "mysql2"
-      output = %x(/usr/bin/env mysqldump -uroot #{adapter_config[:database]} > #{dump_path})
+      _, result[:error], result[:status] = Open3.capture3("/usr/bin/env mysqldump -uroot #{adapter_config[:database]} > #{dump_path}")
     when "sqlite3"
-      output = %x(/usr/bin/env sqlite3 #{adapter_config[:database]} '.backup #{dump_path}')
+      %x(/usr/bin/env sqlite3 #{adapter_config[:database]} '.backup #{dump_path}')
+      result[:status] = $?.success?
     else
       raise NotImplementedError, "Unknown adapter type '#{adapter_config[:adapter]}'"
     end
 
-    { :success => $?.success?, :output => output, :dump_path => dump_path }
+    { :status => result[:status].success?, :error => result[:error], :dump_path => dump_path }
   end
 
   # Restore from a DB dump
@@ -30,17 +34,19 @@ module Siringa
   # @param [String] dump path
   # @return [Object]
   def self.restore_from(dump_path)
+    result = {}
     adapter_config = ActiveRecord::Base.connection.instance_values["config"]
     case adapter_config[:adapter]
     when "mysql", "mysql2"
-      output = %x(/usr/bin/env mysql -uroot #{adapter_config[:database]} < #{dump_path})
+      _, result[:error], result[:status] = Open3.capture3("/usr/bin/env mysql -uroot #{adapter_config[:database]} < #{dump_path}")
     when "sqlite3"
-      output = %x(/usr/bin/env sqlite3 #{adapter_config[:database]} '.restore #{dump_path}')
+      %x(/usr/bin/env sqlite3 #{adapter_config[:database]} '.restore #{dump_path}')
+      result[:status] = $?.success?
     else
       raise NotImplementedError, "Unknown adapter type '#{adapter_config[:adapter]}'"
     end
 
-    { :success => $?.success?, :output => output, :dump_path => dump_path }
+    { :status => result[:status].success?, :error => result[:error], :dump_path => dump_path }
   end
 
   # Delete oldest dump files, keep 5 dump files
