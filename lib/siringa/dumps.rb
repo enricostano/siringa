@@ -15,13 +15,11 @@ module Siringa
   # @return [Object]
   def self.dump_to(dump_path)
     result = {}
-    adapter_config = ActiveRecord::Base.connection.instance_values["config"]
     case adapter_config[:adapter]
     when "mysql", "mysql2"
-      _, result[:error], result[:status] = Open3.capture3("/usr/bin/env mysqldump -uroot #{adapter_config[:database]} > #{dump_path}")
+      _, result[:error], result[:status] = Open3.capture3(mysql_dump_command(adapter_config[:database], dump_path))
     when "sqlite3"
-      %x(/usr/bin/env sqlite3 #{adapter_config[:database]} '.backup #{dump_path}')
-      result[:status] = $?.success?
+      _, result[:error], result[:status] = Open3.capture3(sqlite_dump_command(adapter_config[:database], dump_path))
     else
       raise NotImplementedError, "Unknown adapter type '#{adapter_config[:adapter]}'"
     end
@@ -35,13 +33,11 @@ module Siringa
   # @return [Object]
   def self.restore_from(dump_path)
     result = {}
-    adapter_config = ActiveRecord::Base.connection.instance_values["config"]
     case adapter_config[:adapter]
     when "mysql", "mysql2"
-      _, result[:error], result[:status] = Open3.capture3("/usr/bin/env mysql -uroot #{adapter_config[:database]} < #{dump_path}")
+      _, result[:error], result[:status] = Open3.capture3(mysql_restore_command(adapter_config[:database], dump_path))
     when "sqlite3"
-      %x(/usr/bin/env sqlite3 #{adapter_config[:database]} '.restore #{dump_path}')
-      result[:status] = $?.success?
+      _, result[:error], result[:status] = Open3.capture3(sqlite_restore_command(adapter_config[:database], dump_path))
     else
       raise NotImplementedError, "Unknown adapter type '#{adapter_config[:adapter]}'"
     end
@@ -69,4 +65,47 @@ module Siringa
     Dir.glob("#{Siringa.configuration.dumps_path}/db_*.dump").sort_by { |f| File.mtime(f) }
   end
 
+  private
+
+  # Return a string with the dump command for MySql
+  #
+  # @param database [String]
+  # @param dump_path [String]
+  # @return [String]
+  def self.mysql_dump_command(database, dump_path)
+    "/usr/bin/env mysqldump -uroot #{database} > #{dump_path}"
+  end
+
+  # Return a string with the restore command for MySql
+  #
+  # @param database [String]
+  # @param dump_path [String]
+  # @return [String]
+  def self.mysql_restore_command(database, dump_path)
+    "/usr/bin/env mysql -uroot #{database} < #{dump_path}"
+  end
+
+  # Return a string with the dump command for Sqlite
+  #
+  # @param database [String]
+  # @param dump_path [String]
+  # @return [String]
+  def self.sqlite_dump_command(database, dump_path)
+    "/usr/bin/env sqlite3 #{database} '.backup #{dump_path}'"
+  end
+
+  # Return a string with the restore command for Sqlite
+  #
+  # @param database [String]
+  # @param dump_path [String]
+  # @return [String]
+  def self.sqlite_restore_command(database, dump_path)
+    "/usr/bin/env sqlite3 #{database} '.restore #{dump_path}'"
+  end
+  # Return ActiveRecord adapter config
+  #
+  # @return [Hash]
+  def self.adapter_config
+    ActiveRecord::Base.connection.instance_values["config"]
+  end
 end
