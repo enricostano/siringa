@@ -37,3 +37,8 @@ Dummy::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 end
+
+Siringa.configure do |config|
+  config.definitions_path = 'test/siringa'
+end
+

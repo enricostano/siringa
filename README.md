@@ -113,17 +113,15 @@ The workflow I propose here is:
    Please note that the `Siringa::restore` method only use the latest dump file created, older dump files in the `tmp/dumps` folder will be ignored.
 
 ## Customize Siringa
-You could customize Siringa changing the configuration stored in the initializer:
+You could customize Siringa changing the configuration in the environment where you load Siringa:
 ```ruby
-# config/initializers/siringa.rb
+# config/environments/test.rb
 Siringa.configure do |config|
   # customize the path where the definitions are stored
   config.definitions_path = 'test/siringa'
   # customize the path where the DB dumps are stored
   config.dumps_path = 'tmp/dumps'
 end
-
-Siringa.load_definitions
 ```
 ## Acceptance test example
 Just to get the idea, the following script will show you how to use Siringa in a acceptance test using Selenium, [rest-client](https://github.com/rest-client/rest-client) and RSpec:
