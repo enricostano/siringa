@@ -17,7 +17,11 @@ module Siringa
     result = {}
     case adapter_config[:adapter]
     when "mysql", "mysql2"
-      _, result[:error], result[:status] = Open3.capture3(mysql_dump_command(adapter_config[:database], dump_path))
+      _, result[:error], result[:status] = Open3.capture3(mysql_dump_command(adapter_config[:host],
+                                                                             adapter_config[:database],
+                                                                             adapter_config[:username],
+                                                                             adapter_config[:password],
+                                                                             dump_path))
     when "sqlite3"
       _, result[:error], result[:status] = Open3.capture3(sqlite_dump_command(adapter_config[:database], dump_path))
     else
@@ -35,7 +39,11 @@ module Siringa
     result = {}
     case adapter_config[:adapter]
     when "mysql", "mysql2"
-      _, result[:error], result[:status] = Open3.capture3(mysql_restore_command(adapter_config[:database], dump_path))
+      _, result[:error], result[:status] = Open3.capture3(mysql_restore_command(adapter_config[:host],
+                                                                                adapter_config[:database],
+                                                                                adapter_config[:username],
+                                                                                adapter_config[:password],
+                                                                                dump_path))
     when "sqlite3"
       _, result[:error], result[:status] = Open3.capture3(sqlite_restore_command(adapter_config[:database], dump_path))
     else
@@ -69,20 +77,34 @@ module Siringa
 
   # Return a string with the dump command for MySql
   #
+  # @param host [String]
   # @param database [String]
+  # @param username [String]
+  # @param password [String]
   # @param dump_path [String]
   # @return [String]
-  def self.mysql_dump_command(database, dump_path)
-    "/usr/bin/env mysqldump -uroot #{database} > #{dump_path}"
+  def self.mysql_dump_command(host, database, username, password, dump_path)
+    "/usr/bin/env mysqldump -h#{host} -u#{username} #{password_param(password)} #{database} > #{dump_path}"
   end
 
   # Return a string with the restore command for MySql
   #
+  # @param host [String]
   # @param database [String]
+  # @param username [String]
+  # @param password [String]
   # @param dump_path [String]
   # @return [String]
-  def self.mysql_restore_command(database, dump_path)
-    "/usr/bin/env mysql -uroot #{database} < #{dump_path}"
+  def self.mysql_restore_command(host, database, username, password, dump_path)
+    "/usr/bin/env mysql -h#{host} -u#{username} #{password_param(password)} #{database} < #{dump_path}"
+  end
+
+  # Return a string with the password parameter
+  #
+  # @param password [String]
+  # @return [String]
+  def self.password_param(password)
+    !password.nil? ? "-p#{password}" : ""
   end
 
   # Return a string with the dump command for Sqlite
