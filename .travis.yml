@@ -6,3 +6,7 @@ rvm:
 branches:
   only:
     - master
+
+before_script:
+  # We need to load the schema for dummy app test DB
+  - bundle exec env RAILS_ENV=test rake db:migrate
