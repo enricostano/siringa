@@ -124,6 +124,7 @@ module Siringa
   def self.sqlite_restore_command(database, dump_path)
     "/usr/bin/env sqlite3 #{database} '.restore #{dump_path}'"
   end
+
   # Return ActiveRecord adapter config
   #
   # @return [Hash]

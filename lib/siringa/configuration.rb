@@ -18,7 +18,7 @@ module Siringa
     attr_accessor :definitions_path, :dumps_path
 
     def initialize
-      @definitions_path = "spec/siringa"
+      @definitions_path = "test/siringa"
       @dumps_path = 'tmp/dumps'
     end
   end
