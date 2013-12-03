@@ -36,7 +36,7 @@ Run the generator:
 ```console
 rails generate siringa:install
 ```
-This will add the Siringa initializer in `config/initializers/siringa.rb` and create an empty directory in `tmp/dumps`.
+This will create an empty directory in `tmp/dumps`.
 
 Add the following to your `config/routes.rb`:
 ```ruby
