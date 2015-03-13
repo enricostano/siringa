@@ -8,9 +8,10 @@ module Siringa
   # Load a definition and run its code
   #
   # @param [Symbol] name of the definition
-  def self.load_definition(name)
+  # @param [Hash] arguments of the definition
+  def self.load_definition(name, options)
     if exists_definition?(name)
-      @definitions[name].call
+      @definitions[name].call(options)
     else
       raise ArgumentError, "Definition #{name.to_s} does not exist.", caller
     end
