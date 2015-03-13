@@ -2,7 +2,7 @@ module Siringa
   class SiringaController < ApplicationController
 
     def load
-      Siringa.load_definition(params['definition'].to_sym)
+      Siringa.load_definition(params['definition'].to_sym, options)
       resp = { :text => "Definition #{params['definition']} loaded.", :status => :created }
     rescue ArgumentError => exception
       resp = { :text => exception.to_s, :status => :method_not_allowed }
@@ -45,5 +45,13 @@ module Siringa
       render resp
     end
 
+    private
+
+    # Returns the arguments to be passed to the definition
+    #
+    # @return [Hash] arguments of the definition
+    def options
+      params[:siringa_args]
+    end
   end
 end
