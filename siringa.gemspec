@@ -7,8 +7,8 @@ require "siringa/version"
 Gem::Specification.new do |s|
   s.name        = "siringa"
   s.version     = Siringa::VERSION
-  s.authors     = ["Enrico Stano"]
-  s.email       = ["enricostn@gmail.com"]
+  s.authors     = ["Enrico Stano", "Pau Pérez"]
+  s.email       = ["enricostn@gmail.com", "saulopefa@gmail.com"]
   s.homepage    = "https://github.com/enricostano/siringa"
   s.summary     = "Remotely populate DB for Rails applications for pure client acceptance testing"
   s.description = "Remotely populate DB for Rails applications for pure client acceptance testing"
