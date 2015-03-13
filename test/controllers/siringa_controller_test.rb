@@ -20,4 +20,9 @@ class SiringaControllerTest < ActionController::TestCase
     assert_response :method_not_allowed
   end
 
+  test "load action passing arguments" do
+    get :load, { definition: "definition_with_arguments", siringa_args: { name: 'Robb Stark' }, use_route: "siringa" }
+    assert_response :success
+  end
+
 end
