@@ -21,8 +21,22 @@ class SiringaControllerTest < ActionController::TestCase
   end
 
   test "load action passing arguments" do
-    get :load, { definition: "definition_with_arguments", siringa_args: { name: 'Robb Stark' }, use_route: "siringa" }
+    get :load, {
+      definition: "definition_with_arguments",
+      siringa_args: { name: 'Robb Stark' },
+      use_route: "siringa"
+    }
     assert_response :success
   end
 
+  test "load action returning JSON response" do
+    get :load, {
+      definition: "definition_with_return",
+      siringa_args: { name: 'Ned' },
+      use_route: "siringa"
+    }
+    assert body['id']
+    assert_equal 'Ned', body['name']
+    assert_equal 'Stark', body['surname']
+  end
 end

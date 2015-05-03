@@ -2,14 +2,12 @@ module Siringa
   class SiringaController < ApplicationController
 
     def load
-      Siringa.load_definition(params['definition'].to_sym, options)
-      resp = { :text => "Definition #{params['definition']} loaded.", :status => :created }
+      result = Siringa.load_definition(params['definition'].to_sym, options)
+      render json: result, status: :created
     rescue ArgumentError => exception
-      resp = { :text => exception.to_s, :status => :method_not_allowed }
-    rescue => exception
-      resp = { :text => exception.to_s, :status => :internal_server_error }
-    ensure
-      render resp
+      render json: { error: exception.to_s }, status: :method_not_allowed
+    rescue StandardError => exception
+      render json: { error: exception.to_s }, status: :internal_server_error
     end
 
     def dump
