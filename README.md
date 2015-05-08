@@ -1,5 +1,7 @@
 # Siringa :syringe:
 This gem was born working on pure client acceptance testing in [Teambox](http://www.teambox.com).
+## WARNING :warning:
+Due to a conflict with reserved word `load` we are deprecating `#load` action in `SiringaController` in favour of `#load_definition`. This change is reflected by a warning in logs but will be dropped in version `0.1.0`.
 ## The problem
 
 You have a Rails based API and you need to write some acceptance tests using your Javascript/iOS/Android/whatever client.
