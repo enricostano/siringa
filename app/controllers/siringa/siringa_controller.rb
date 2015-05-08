@@ -1,6 +1,14 @@
 module Siringa
   class SiringaController < ApplicationController
 
+    # TODO: deprecate in 0.1.0
+    #
+    def load
+      Rails.logger.warn '[Siringa] Using /load route has been deprecated in favour of /load_definition. Will be dropped in 0.1.0'
+
+      load_definition
+    end
+
     def load_definition
       result = Siringa.load_definition(params['definition'].to_sym, options)
       render json: result, status: :created
