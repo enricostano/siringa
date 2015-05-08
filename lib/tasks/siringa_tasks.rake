@@ -1,6 +1,6 @@
 namespace :siringa do
   desc "Load a definition and populate the DB with seed data"
-  task :load, [:definition] do |t, args|
+  task :load_definition, [:definition] do |t, args|
     args.with_defaults :definition => :initial
     Rake::Task["environment"].invoke
     puts <<-EOS

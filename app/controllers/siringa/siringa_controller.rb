@@ -1,7 +1,7 @@
 module Siringa
   class SiringaController < ApplicationController
 
-    def load
+    def load_definition
       result = Siringa.load_definition(params['definition'].to_sym, options)
       render json: result, status: :created
     rescue ArgumentError => exception

@@ -72,24 +72,24 @@ Now that we've created our definitions we could use them in our two cases:
 ### As seed data
 You could just load the `initial` definition running the following rake recipe after your deploy:
 ```console
-rake siringa:load
+rake siringa:load_definition
 ```
 `initial` is the default definition this Rake task recipe will try to load, if you want to load another definition instead you could pass its name as argument:
 ```console
-rake 'siringa:load[another_definition]'
+rake 'siringa:load_definition[another_definition]'
 ```
 This will load a definition named `:another_definition`. Please note that if you use Zsh shell you'll need to use quotes, more info [here](http://robots.thoughtbot.com/post/18129303042/how-to-use-arguments-in-a-rake-task).
 
 If you want to force a Rails environment you could just run the Sriringa recipe specifing the `RAILS_ENV` environmental variable:
 ```console
-RAILS_ENV=development rake siringa:load
+RAILS_ENV=development rake siringa:load_definition
 ```
 
 ### During an acceptance test
 As you can see running `rake routes`, Siringa added 3 new routes to your API:
 ```console
 Routes for Siringa::Engine:
-        POST /load/:definition(.:format) siringa/siringa#load
+        POST /load_definition/:definition(.:format) siringa/siringa#load_definition
    dump POST /dump(.:format)             siringa/siringa#dump
 restore POST /restore(.:format)          siringa/siringa#restore
 ```
@@ -100,7 +100,7 @@ The workflow I propose here is:
 
    This will create a `.dump` file in the `tmp/dumps` directory created during the install process. You could create as many dump files as you want but Siringa will keep only the latest 5 dumps created.
 
-2. Load a Siringa definition performing a `POST` request to `YOURHOST/siringa/load/specific`
+2. Load a Siringa definition performing a `POST` request to `YOURHOST/siringa/load_definition/specific`
 
    This will run the code defined in a definition named `specific` on the server.
 
@@ -126,7 +126,7 @@ end
 ## Acceptance test example
 Just to get the idea, the following script will show you how to use Siringa in a acceptance test using Selenium, [rest-client](https://github.com/rest-client/rest-client) and RSpec:
 ```ruby
-require 'selenium-webdriver'dd
+require 'selenium-webdriver'
 require 'rspec'
 require 'rest_client'
 
@@ -144,9 +144,9 @@ describe "Acceptance test using Siringa" do
     @driver.quit
   end
 
-  it "Load a definition and test something" do
-    # Load a definition named 'specific'
-    RestClient.post 'YOURHOST/siringa/load', { :definition => :specific }
+  it "Loads a definition and test something" do
+    # Loads a definition named 'specific'
+    RestClient.post 'YOURHOST/siringa/load_definition', { definition: :specific }
 
     # Here goes your test
 
@@ -163,5 +163,5 @@ end
 ## How to collaborate
 * Fork the repo and send a pull request, thanks!
 
-# Licence
+# License
 MIT-LICENSE 2013 Enrico Stano
