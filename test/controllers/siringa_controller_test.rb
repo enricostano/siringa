@@ -8,6 +8,7 @@ class SiringaControllerTest < ActionController::TestCase
   end
 
   def teardown
+    puts "LOG >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n #{File.read(Rails::logger.instance_variable_get("@logdev").instance_variable_get("@dev"))}\nLOG >>>>>>>>>>>>>>>>>>>>>>><<<<"
   end
 
   test "load_definition action passing existing factory" do
